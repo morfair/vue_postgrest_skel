@@ -1,20 +1,18 @@
 <template>
-  <v-app>
-    <core-filter />
+	<v-app>
 
-    <core-toolbar />
+		<div>
 
-    <core-drawer />
+			<div v-if="$auth.ready()">
+				<router-view></router-view>
+			</div>
 
-    <core-view />
-  </v-app>
+			<div v-if="!$auth.ready()">
+				Loading ...
+			</div>
+
+		</div>
+
+    
+	</v-app>
 </template>
-
-<style lang="scss">
-@import '@/styles/index.scss';
-
-/* Remove in 1.2 */
-.v-datatable thead th.column.sortable i {
-  vertical-align: unset;
-}
-</style>

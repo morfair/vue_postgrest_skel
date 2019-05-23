@@ -30,7 +30,7 @@
             />
           </v-list-tile-avatar>
           <v-list-tile-title class="title">
-            Vuetify MD
+            App MF Skel
           </v-list-tile-title>
         </v-list-tile>
         <v-divider/>
@@ -85,48 +85,20 @@ import {
 
 export default {
   data: () => ({
-    logo: './img/vuetifylogo.png',
+    logo: '/img/vuetifylogo.png',
     links: [
       {
-        to: '/dashboard',
-        icon: 'mdi-view-dashboard',
-        text: 'Dashboard'
-      },
-      {
-        to: '/user-profile',
+        to: '/users',
         icon: 'mdi-account',
-        text: 'User Profile'
+        text: 'Users'
       },
-      {
-        to: '/table-list',
-        icon: 'mdi-clipboard-outline',
-        text: 'Table List'
-      },
-      {
-        to: '/typography',
-        icon: 'mdi-format-font',
-        text: 'Typography'
-      },
-      {
-        to: '/icons',
-        icon: 'mdi-chart-bubble',
-        text: 'Icons'
-      },
-      {
-        to: '/maps',
-        icon: 'mdi-map-marker',
-        text: 'Maps'
-      },
-      {
-        to: '/notifications',
-        icon: 'mdi-bell',
-        text: 'Notifications'
-      }
     ],
-    responsive: false
+    responsive: false,
+    image: "/img/sidebar-3.3a54f533.jpg",
+    color: "success",
   }),
   computed: {
-    ...mapState('app', ['image', 'color']),
+    // ...mapState('app', ['image', 'color']),
     inputValue: {
       get () {
         return this.$store.state.app.drawer
