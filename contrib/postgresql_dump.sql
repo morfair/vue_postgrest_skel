@@ -1,37 +1,28 @@
-ALTER DATABASE vue_postgrest_skel SET "app.jwt_secret" TO 'bkj5craTPn5g1EAQ1TXrMTla5W1S26HV5qsg5XjgkDc=';
 
--- pass
+CREATE ROLE admin;
+ALTER ROLE admin WITH NOSUPERUSER INHERIT NOCREATEROLE NOCREATEDB NOLOGIN NOREPLICATION NOBYPASSRLS PASSWORD 'md549088b3a87b8ce56ecd39259d17ff834';
 CREATE ROLE authenticator;
 ALTER ROLE authenticator WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS PASSWORD 'md502b7df19a04089856a67eb7f1b5a3af2';
-
+CREATE ROLE backend;
+ALTER ROLE backend WITH NOSUPERUSER INHERIT NOCREATEROLE NOCREATEDB NOLOGIN NOREPLICATION NOBYPASSRLS;
+CREATE ROLE manager;
+ALTER ROLE manager WITH NOSUPERUSER INHERIT NOCREATEROLE NOCREATEDB NOLOGIN NOREPLICATION NOBYPASSRLS;
 CREATE ROLE web_anon;
 ALTER ROLE web_anon WITH NOSUPERUSER INHERIT NOCREATEROLE NOCREATEDB NOLOGIN NOREPLICATION NOBYPASSRLS;
 
-CREATE ROLE backend;
-ALTER ROLE backend WITH NOSUPERUSER INHERIT NOCREATEROLE NOCREATEDB NOLOGIN NOREPLICATION NOBYPASSRLS;
-
--- superpass
-CREATE ROLE admin;
-ALTER ROLE admin WITH NOSUPERUSER INHERIT NOCREATEROLE NOCREATEDB NOLOGIN NOREPLICATION NOBYPASSRLS PASSWORD 'md549088b3a87b8ce56ecd39259d17ff834';
-
-CREATE ROLE manager;
-ALTER ROLE manager WITH NOSUPERUSER INHERIT NOCREATEROLE NOCREATEDB NOLOGIN NOREPLICATION NOBYPASSRLS;
 
 GRANT admin TO authenticator GRANTED BY postgres;
-GRANT manager TO authenticator GRANTED BY postgres;
+GRANT agents TO authenticator GRANTED BY postgres;
 GRANT backend TO authenticator GRANTED BY postgres;
 GRANT web_anon TO authenticator GRANTED BY postgres;
 
 
+ALTER DATABASE vue_postgrest_skel SET "app.jwt_secret" TO 'bkj5craTPn5g1EAQ1TXrMTla5W1S26HV5qsg5XjgkDc=';
+
 
 CREATE SCHEMA api;
-ALTER SCHEMA api OWNER TO postgres;
-
 CREATE SCHEMA basic_auth;
-ALTER SCHEMA basic_auth OWNER TO postgres;
-
 CREATE SCHEMA db;
-ALTER SCHEMA db OWNER TO postgres;
 
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
@@ -44,7 +35,6 @@ COMMENT ON EXTENSION pgjwt IS 'JSON Web Token API for Postgresql';
 CREATE TYPE basic_auth.jwt_token AS (
 	token text
 );
-ALTER TYPE basic_auth.jwt_token OWNER TO postgres;
 
 
 CREATE FUNCTION api.login(email text, pass text) RETURNS basic_auth.jwt_token
@@ -72,8 +62,6 @@ begin
 end;
 $$;
 
-ALTER FUNCTION api.login(email text, pass text) OWNER TO postgres;
-
 
 CREATE FUNCTION basic_auth.check_role_exists() RETURNS trigger
     LANGUAGE plpgsql
@@ -88,8 +76,6 @@ begin
 end
 $$;
 
-ALTER FUNCTION basic_auth.check_role_exists() OWNER TO postgres;
-
 
 CREATE FUNCTION basic_auth.encrypt_pass() RETURNS trigger
     LANGUAGE plpgsql
@@ -101,8 +87,6 @@ begin
   return new;
 end
 $$;
-
-ALTER FUNCTION basic_auth.encrypt_pass() OWNER TO postgres;
 
 
 CREATE FUNCTION basic_auth.get_user_id() RETURNS trigger
@@ -120,8 +104,6 @@ begin
 end
 $$;
 
-ALTER FUNCTION basic_auth.get_user_id() OWNER TO postgres;
-
 
 CREATE FUNCTION basic_auth.user_role(email text, pass text) RETURNS name
     LANGUAGE plpgsql
@@ -135,29 +117,55 @@ begin
 end;
 $$;
 
-ALTER FUNCTION basic_auth.user_role(email text, pass text) OWNER TO postgres;
+
+CREATE VIEW api.roles AS
+ SELECT pg_roles.rolname
+   FROM pg_roles
+  WHERE ((pg_roles.rolname !~~ 'pg_%'::text) AND (pg_roles.rolname <> ALL (ARRAY['web_anon'::name, 'backend'::name, 'authenticator'::name, 'postgres'::name])));
 
 
 CREATE TABLE basic_auth.users (
     id serial,
     email text NOT NULL,
     pass text NOT NULL,
-    role name NOT NULL
+    role name NOT NULL,
+    disabled boolean DEFAULT false NOT NULL
 );
+
+
+CREATE TABLE db.users_ext (
+    id serial,
+    user_id integer,
+    full_name character varying(255)
+);
+
+
+CREATE VIEW api.users AS
+ SELECT b.id,
+    b.email,
+    b.role,
+    b.disabled,
+    d.full_name
+   FROM (basic_auth.users b
+     LEFT JOIN db.users_ext d ON ((b.id = d.user_id)));
+
+
+COPY basic_auth.users (id, email, pass, role, disabled) FROM stdin;
+1	admin@example.com	$2a$06$rsGJd0RdGyafslv/qxK.Z.kP.jcIv5mhP4FagglApn2egmsyOSKgK	admin	f
+3	manager@example.com	$2a$06$eDRPgBygH3xLKiEY7kfXCuMY6jSazK8ejfwCA3M5R9SNMqzG136qy	manager	f
+\.
+
+
+
 CREATE TRIGGER encrypt_pass BEFORE INSERT OR UPDATE ON basic_auth.users FOR EACH ROW EXECUTE PROCEDURE basic_auth.encrypt_pass();
 CREATE CONSTRAINT TRIGGER ensure_user_role_exists AFTER INSERT OR UPDATE ON basic_auth.users NOT DEFERRABLE INITIALLY IMMEDIATE FOR EACH ROW EXECUTE PROCEDURE basic_auth.check_role_exists();
-
-ALTER TABLE basic_auth.users OWNER TO postgres;
 
 
 GRANT USAGE ON SCHEMA api TO web_anon;
 GRANT USAGE ON SCHEMA api TO backend;
-
+GRANT USAGE ON SCHEMA api TO admin;
 GRANT USAGE ON SCHEMA basic_auth TO web_anon;
-GRANT USAGE ON SCHEMA basic_auth TO manager;
 
-GRANT ALL ON FUNCTION api.login(email text, pass text) TO web_anon;
-
+GRANT SELECT ON TABLE api.roles TO admin;
 GRANT SELECT ON TABLE basic_auth.users TO web_anon;
-
-
+GRANT SELECT ON TABLE api.users TO admin;
