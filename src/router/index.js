@@ -18,10 +18,11 @@ import AppInterface from '../AppInterface.vue'
 import Login from '../views/Login.vue'
 import paths from './paths'
 
-function route (path, view, name) {
+function route (path, view, name, meta) {
   return {
     name: name || view,
     path,
+    meta: meta || null,
     component: (resovle) => import(
       `@/views/${view}.vue`
     ).then(resovle)
@@ -40,14 +41,15 @@ const router = new Router({
     { path: '/login', name: 'Login', component: Login },
 
     {
-      path: '/', name: 'app', component: AppInterface, redirect: { name: 'Dashboard' },
+      path: '/', name: 'app', component: AppInterface, redirect: { name: 'Users' },
       meta: {
         auth: true,
       },
       children: 
-        paths.map(path => route(path.path, path.view, path.name)).concat([
-          { path: '*', redirect: '/users' }
-        ])
+        paths.map(path => route(path.path, path.view, path.name, path.meta))
+          .concat([
+            { path: '*', redirect: '/users' }
+          ])
     },
 
   ],

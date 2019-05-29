@@ -53,15 +53,23 @@ Vue.use(VueAuth, {
 
     loginData: {
 		url: 'rpc/login',
+		fetchUser: false,
 	},
 	fetchData: {
 		url: 'rpc/user',
-		enabled: false,
+		enabled: true,
 	},
+	parseUserData: function (data) {
+		return data[0];
+	},
+	rolesVar: "role",
 	refreshData: {
 		url: 'rpc/refresh',
 		enabled: false,
-	}
+	},
+	// forbiddenRedirect: {path: '/403'},
+	forbiddenRedirect: {path: '/login'},
+	notFoundRedirect: {path: '/login'},
 })
 
 // rem ???

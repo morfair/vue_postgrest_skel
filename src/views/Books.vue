@@ -3,7 +3,7 @@
     <v-layout justify-center wrap>
       <v-flex md12>
 
-        <material-card color="green" title="User List" text="Users, who can log in in the system">
+<!--         <material-card color="green" title="User List" text="Users, who can log in in the system">
           <v-data-table :headers="headers" :items="items" hide-actions>
             
             <template slot="headerCell" slot-scope="{ header }">
@@ -12,16 +12,16 @@
             </template>
             
             <template slot="items" slot-scope="{ item }">
-              <td>{{ item.email }}</td>
-              <td>{{ item.full_name }}</td>
+              <td>{{ item.name }}</td>
+              <td>{{ item.author }}</td>
               <td>{{ item.role }}</td>
               <td class="text-xs-right">{{ item.disabled }}</td>
             </template>
 
           </v-data-table>
-        </material-card>
+        </material-card> -->
 
-        <v-btn color="success" class="right" :to='{ name: "UserMod" }'>Add User</v-btn>
+        <v-btn color="success" class="right" :to='{ name: "BookMod" }'>Add Book</v-btn>
 
       </v-flex>
     </v-layout>
@@ -71,13 +71,6 @@
     methods: {
      
       load() {
-          API.getUsers().then(
-            res => {
-              // console.log(res.data);
-              this.items = res.data;
-            },
-            err => console.log(err)
-          );
       },
 
     }

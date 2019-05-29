@@ -50,6 +50,7 @@
           :active-class="color"
           avatar
           class="v-list-item"
+          v-if="link.roles.includes($auth.user().role)"
         >
           <v-list-tile-action>
             <v-icon>{{ link.icon }}</v-icon>
@@ -90,7 +91,14 @@ export default {
       {
         to: '/users',
         icon: 'mdi-account',
-        text: 'Users'
+        text: 'Users',
+        roles: ["admin"],
+      },
+      {
+        to: '/books',
+        icon: 'mdi-book',
+        text: 'Books',
+        roles: ["admin", "manager"],
       },
     ],
     responsive: false,

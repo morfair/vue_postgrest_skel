@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height fluid grid-list-xl>
     <v-layout justify-center wrap>
-      <v-flex xs12 md8>
+      <v-flex xs12 md12 xl8>
         
         <material-card color="green" title="Edit Profile" text="Complete your profile">
           <v-form ref="form" v-model="valid">
@@ -102,15 +102,18 @@
 
       submit() {
         if (this.$refs.form.validate()) {
-          delete this.form.pass2
-          console.log(this.form);
+          delete this.form.pass2;
+
+          // TEMP for current API:
+          delete this.form.full_name;
+
           // Native form submission is not yet supported
-          // API.addUser(this.form).then(
-          //   res => {
-          //     this.$router.push({name: "accounts"})
-          //   },
-          //   err => console.log(err)
-          // )
+          API.addUser(this.form).then(
+            res => {
+              this.$router.push({name: "Users"})
+            },
+            err => console.log(err)
+          )
         }
 
       },

@@ -15,7 +15,12 @@ export default {
 	},
 
 	addUser(data) {
-		return axios.post("/users", data);
+		var config = {
+			headers: {
+				"Prefer": "return=minimal",
+			},
+		};
+		return axios.post("/users_raw", data, config);
 	},
 
 	// updateAccount(account, data) {
