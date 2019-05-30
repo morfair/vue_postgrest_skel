@@ -146,7 +146,7 @@ CREATE VIEW api.roles AS
 
 
 CREATE TABLE basic_auth.users (
-    id integer NOT NULL,
+    id serial,
     email text NOT NULL,
     pass text NOT NULL,
     role name NOT NULL,
@@ -156,7 +156,7 @@ CREATE TABLE basic_auth.users (
 
 
 CREATE TABLE db.users_ext (
-    id integer NOT NULL,
+    id serial,
     user_id integer,
     full_name character varying(255)
 );
