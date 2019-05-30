@@ -37,7 +37,7 @@
           </v-data-table>
         </material-card>
 
-        <!-- <v-btn color="success" class="right" :to='{ name: "UserMod" }'>Add User</v-btn> -->
+        <v-btn color="success" class="right" :to='{ name: "user_add" }'>Add User</v-btn>
 
       </v-flex>
     </v-layout>
@@ -106,7 +106,7 @@
           id: item.id,
           disabled: item.disabled
         };
-        
+
         API.updateUser(data).then(
           res => {},
           err => console.log(err)
