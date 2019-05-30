@@ -54,7 +54,7 @@
       
       headers: [
         {
-          sortable: false,
+          sortable: true,
           text: 'E-Mail',
           value: 'email'
         },

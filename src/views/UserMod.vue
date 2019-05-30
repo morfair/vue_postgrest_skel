@@ -101,6 +101,7 @@
             err => console.log(err)
           );
 
+
           // For EDIT action:
           if ( this.$route.params.id ) {
             this.v_edit = true
@@ -109,15 +110,23 @@
           if ( this.v_edit ) {
             API.getUser(this.$route.params.id).then(
               res => {
+
                 this.form = res.data[0];
+
+                // Переписываем рульз на необходимость пароля
+                // Если поле пароля пустое - то не изменять пароль
                 this.passRules = [
                   v => {
+
+                    // Если поле с паролем пустое:
                     if ( !v ) {
-                      // delete this.form.pass;
-                      return true;
-                    }
+                      delete this.form.pass;
+                    };
+                    return true;
+
                   },
                 ];
+
               },
               err => console.log(err)
             )
