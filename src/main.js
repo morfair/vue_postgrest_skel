@@ -53,7 +53,7 @@ Vue.use(VueAuth, {
 
     loginData: {
 		url: 'rpc/login',
-		fetchUser: false,
+		fetchUser: true,
 	},
 	fetchData: {
 		url: 'rpc/user',

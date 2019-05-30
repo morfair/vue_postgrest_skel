@@ -8,6 +8,7 @@ export default [
   {
     path: '/users',
     view: 'Users',
+    name: 'users',
     meta: {
       auth: {
         roles: ['admin'],
@@ -17,6 +18,22 @@ export default [
   {
     path: '/users/add',
     view: "UserMod",
+    name: 'user_add',
+    meta: {
+      auth: {
+        roles: ['admin'],
+      }
+    },
+  },
+  {
+    path: '/users/:id',
+    view: "UserMod",
+    name: 'user_edit',
+    meta: {
+      auth: {
+        roles: ['admin'],
+      }
+    },
   },
 
   {

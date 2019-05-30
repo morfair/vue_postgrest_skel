@@ -48,7 +48,8 @@
 						:value="p.login_error"
 						type="error"
 					>
-						Ошибка входа
+						Ошибка входа<br />
+						<small>{{ p.response }}</small>
 					</v-alert>
 
 			</v-flex>
@@ -82,18 +83,16 @@
 		methods: {
 
 			logIn(event) {
-				// console.log(this.user);
 				this.p.login_error = false;
 				this.p.loading = true;
 				this.$auth.login({
 					data: this.user,
-					fetchUser: false, // temp
 					// success: res => console.log(res),
 					error: error => {
 						this.p.loading = false;
 						this.p.login_error = true;
+						this.p.response = `${error.response.data.message}, (code: ${error.response.data.code})`;
 					},
-
 				})
 			},
 

@@ -14,6 +14,10 @@ export default {
 		return axios.get('/users');
 	},
 
+	getUser(user_id) {
+		return axios.get(`/users?id=eq.${user_id}`);
+	},
+
 	addUser(data) {
 		var config = {
 			headers: {
@@ -23,8 +27,9 @@ export default {
 		return axios.post("/users_raw", data, config);
 	},
 
-	// updateAccount(account, data) {
-	// 	return axios.patch(`/accounts?account=eq.${account}`, data);
-	// },
+	updateUser(data) {
+		var user_id = data.id;
+		return axios.patch(`/users_raw?id=eq.${user_id}`, data);
+	},
 
 }

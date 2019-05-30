@@ -15,13 +15,29 @@
               <td>{{ item.email }}</td>
               <td>{{ item.full_name }}</td>
               <td>{{ item.role }}</td>
-              <td class="text-xs-right">{{ item.disabled }}</td>
+              <td>
+
+                <v-tooltip top content-class="top">
+                  <v-btn slot="activator" class="v-btn--simple" icon :to="{name: 'user_edit', params: {id: item.id}}">
+                    <v-icon color="success">mdi-pencil</v-icon>
+                  </v-btn>
+                  <span>Edit</span>
+                </v-tooltip>
+
+                <v-tooltip top content-class="top">
+                  <v-btn slot="activator" class="v-btn--simple" icon @click="change_item(item)">
+                    <v-icon :color="item.disabled ? 'pink' : 'grey'" >mdi-block-helper</v-icon>
+                  </v-btn>
+                  <span>Disable</span>
+                </v-tooltip>
+
+              </td>
             </template>
 
           </v-data-table>
         </material-card>
 
-        <v-btn color="success" class="right" :to='{ name: "UserMod" }'>Add User</v-btn>
+        <!-- <v-btn color="success" class="right" :to='{ name: "UserMod" }'>Add User</v-btn> -->
 
       </v-flex>
     </v-layout>
@@ -54,8 +70,6 @@
         },
         {
           sortable: false,
-          text: 'Disabled',
-          value: 'disabled',
           align: 'right'
         }
       ],
@@ -79,6 +93,27 @@
             err => console.log(err)
           );
       },
+
+      change_item(item) {
+
+        if ( item.disabled == false ) {
+          item.disabled = true;
+        } else {
+          item.disabled = false;
+        };
+
+        var data = {
+          id: item.id,
+          disabled: item.disabled
+        };
+        
+        API.updateUser(data).then(
+          res => {},
+          err => console.log(err)
+        );
+
+      },
+
 
     }
  

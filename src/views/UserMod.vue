@@ -56,6 +56,7 @@
 
       return {
         form: {},
+        v_edit: false,
         valid: false,
         roles: [],
 
@@ -69,7 +70,7 @@
           v => !!v || 'Required',
         ],
         pass2Rules: [
-          v => !!v || 'Required',
+          // v => !!v || 'Required',
           v => {
             if ( v != this.form.pass ) {
               return 'Passwords do not match'
@@ -89,6 +90,7 @@
     methods: {
      
       load() {
+
           API.getRoles().then(
             res => {
               // console.log(res);
@@ -98,6 +100,29 @@
             },
             err => console.log(err)
           );
+
+          // For EDIT action:
+          if ( this.$route.params.id ) {
+            this.v_edit = true
+          };
+
+          if ( this.v_edit ) {
+            API.getUser(this.$route.params.id).then(
+              res => {
+                this.form = res.data[0];
+                this.passRules = [
+                  v => {
+                    if ( !v ) {
+                      // delete this.form.pass;
+                      return true;
+                    }
+                  },
+                ];
+              },
+              err => console.log(err)
+            )
+          };
+
       },
 
       submit() {
@@ -105,15 +130,26 @@
           delete this.form.pass2;
 
           // TEMP for current API:
-          delete this.form.full_name;
+          // delete this.form.full_name;
+
 
           // Native form submission is not yet supported
-          API.addUser(this.form).then(
-            res => {
-              this.$router.push({name: "Users"})
-            },
-            err => console.log(err)
-          )
+
+          var ApiMethod;
+          // If "add":
+          if ( ! this.v_edit ) {
+            ApiMethod = API.addUser;
+          // if "edit"
+          } else {
+            ApiMethod = API.updateUser;
+          }
+
+          ApiMethod(this.form).then(
+              res => {
+                this.$router.push({name: "users"})
+              },
+              err => console.log(err)
+            )
         }
 
       },
