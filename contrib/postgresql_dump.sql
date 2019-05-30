@@ -209,5 +209,3 @@ GRANT SELECT ON TABLE basic_auth.users TO manager;
 GRANT SELECT ON TABLE api.users TO admin;
 
 GRANT SELECT,INSERT,UPDATE ON TABLE api.users_raw TO admin;
-
-GRANT UPDATE ON SEQUENCE basic_auth.users_id_seq TO admin;
