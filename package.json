@@ -11,7 +11,7 @@
   "dependencies": {
     "@websanova/vue-auth": "^2.21.14-beta",
     "chartist": "0.11.0",
-    "node-sass": "^4.9.3",
+    "node-sass": "^4.13.1",
     "sass-loader": "^7.1.0",
     "vue": "^2.5.17",
     "vue-axios": "^2.1.4",
